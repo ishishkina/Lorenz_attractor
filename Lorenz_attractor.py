@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq, fftshift
 
 # definition of function that gives derivatives at the point x, y, z
-def diff(x, y, z, sig=1.5, r=20, b=0.1):
+def diff(x, y, z, sig=1.5, r=100, b=0.1):
     x_dot = sig * (y - x)
     y_dot = r * x - y - x * z
     z_dot = x * y - b * z
@@ -13,9 +13,9 @@ def diff(x, y, z, sig=1.5, r=20, b=0.1):
 # time step
 dt = 0.01
 # number of time steps
-count = 100000
+count = 10**5
 time = dt*count
-t = np.linspace(0, time, count+1)
+t = np.linspace(0, time, count+1, endpoint=False)
 
 # initialization of arrays
 xs = np.empty(count + 1)
@@ -46,17 +46,40 @@ ax. set_zlabel("Z Axis")
 ax.set_title("Lorenz Attractor")
 plt.show()
 
-# fast fourier transform
+# time dependence
 fig = plt.figure()
 ax = plt.axes()
-xn = xs[200:count]
-yf = fft(xn)
-xf = fftfreq(count-200, dt)
-xf = fftshift(xf)
-yplot = fftshift(yf)
-plt.xlim(-2.0, 2.0)
-ax. set_xlabel("omega")
-ax. set_ylabel("F")
-plt.plot(xf, (time-20000)/(count-200) * np.abs(yplot), color="blue")
+ax. set_xlabel("t")
+ax. set_ylabel("x")
+plt.plot(t, xs, color="red")
+plt.grid()
+plt.show()
+
+fig = plt.figure()
+ax = plt.axes()
+ax. set_xlabel("t")
+ax. set_ylabel("y")
+plt.plot(t, ys, color="blue")
+plt.grid()
+plt.show()
+
+fig = plt.figure()
+ax = plt.axes()
+ax. set_xlabel("t")
+ax. set_ylabel("z")
+plt.plot(t, zs, color="green")
+plt.grid()
+plt.show()
+
+# fast fourier transform
+skip = 10000
+xf = fftshift(fft(xs[skip:]))
+frequency = fftshift(fftfreq(count - skip+1, dt))
+fig = plt.figure()
+ax = plt.axes()
+ax. set_xlabel("frequency")
+ax. set_ylabel("Xf")
+plt.xlim(0.0, 2.0)
+plt.plot(frequency, 1.0 / (count - skip) * np.abs(xf), color="blue")
 plt.grid()
 plt.show()
